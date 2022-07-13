@@ -1,0 +1,38 @@
+@startuml
+entity Users {
+    id
+    name
+    email
+    password_hash
+    created_at
+    updated_at
+}
+
+entity Posts {
+    id
+    user_id
+    content
+    image_url
+    created_at
+    updated_at
+}
+
+entity Funny {
+    user_id
+    post_id
+    created_at
+}
+
+entity Yummy {
+    user_id
+    post_id
+    created_at
+}
+
+Users --right{ Posts
+Funny -[hidden]left- Yummy
+Users --{ Funny
+Users --{ Yummy
+Funny }-- Posts
+Yummy }-- Posts
+@enduml
