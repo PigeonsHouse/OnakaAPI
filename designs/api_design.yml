@@ -53,29 +53,6 @@ paths:
               examples:
                 Example:
                   $ref: '#/components/examples/JwtExample'
-  /api/v1/users/{user_id}:
-    get:
-      summary: get one's user info
-      tags:
-        - users
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/UserResponse'
-              examples:
-                Example:
-                  $ref: '#/components/examples/UserResponseExample'
   /api/v1/users/@me:
     get:
       summary: get my user info
@@ -137,6 +114,75 @@ paths:
               examples:
                 Example:
                   $ref: '#/components/examples/MessageOK'
+  /api/v1/users/@me/posts:
+    get:
+      summary: get my posts
+      tags:
+        - posts
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  items:
+                    $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                    $ref: '#/components/examples/TimeLineExample'
+  /api/v1/users/{user_id}:
+    get:
+      summary: get one's user info
+      tags:
+        - users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/UserResponseExample'
+  /api/v1/users/{user_id}/posts:
+    get:
+      summary: get one's posts
+      tags:
+        - posts
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  items:
+                    $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                    $ref: '#/components/examples/TimeLineExample'
   /api/v1/posts/image:
     post:
       summary: post images
@@ -196,7 +242,175 @@ paths:
               examples:
                 Example:
                   $ref: '#/components/examples/PostResponseExample'
-      
+    get:
+      summary: get time line
+      tags:
+        - posts
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  items:
+                    $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                    $ref: '#/components/examples/TimeLineExample'
+  /api/v1/posts/{post_id}:
+    get:
+      summary: get post info
+      tags:
+        - posts
+      security:
+        - Bearer: []
+      parameters:
+        - name: post_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/PostResponseExample'
+    delete:
+      summary: delete my post
+      tags:
+        - posts
+      security:
+        - Bearer: []
+      parameters:
+        - name: post_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Message'
+              examples:
+                Example:
+                  $ref: '#/components/examples/MessageOK'
+  /api/v1/funny/{post_id}:
+    post:
+      summary: send funny for post
+      tags:
+        - funny
+      security:
+        - Bearer: []
+      parameters:
+        - name: post_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/PostResponseExample'
+    delete:
+      summary: revoke funny for post
+      tags:
+        - funny
+      security:
+        - Bearer: []
+      parameters:
+        - name: post_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/PostResponseExample'
+  /api/v1/yummy/{post_id}:
+    post:
+      summary: send yummy for post
+      tags:
+        - yummy
+      security:
+        - Bearer: []
+      parameters:
+        - name: post_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/PostResponseExample'
+    delete:
+      summary: revoke yummy for post
+      tags:
+        - yummy
+      security:
+        - Bearer: []
+      parameters:
+        - name: post_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/PostResponseExample'
+        
+    
 
 components:
   schemas:
@@ -267,6 +481,10 @@ components:
           type: string
         image_path:
           type: string
+        funny_count:
+          type: number
+        yummy_count:
+          type: number
         created_at:
           type: string
           format: date-time
@@ -287,8 +505,28 @@ components:
         user_id: 1234-5678-90abcdef
         content: ちくわを食べてこんちくわ
         image_path: https://www.coindeskjapan.com/wp-content/uploads/2021/03/Screen-Shot-2021-02-19-at-4.14.43-PM-710x458.jpg
+        funny_count: 3
+        yummy_count: 421
         created_at: "2002-02-17T12:34:56.789Z"
         updated_at: "2002-02-17T12:34:56.789Z"
+    TimeLineExample:
+      value:
+        - id: fedcba09-8765-4321
+          user_id: 1234-5678-90abcdef
+          content: ちくわを食べてこんちくわ
+          image_path: https://www.coindeskjapan.com/wp-content/uploads/2021/03/Screen-Shot-2021-02-19-at-4.14.43-PM-710x458.jpg
+          funny_count: 3
+          yummy_count: 421
+          created_at: "2002-02-17T12:34:56.789Z"
+          updated_at: "2002-02-17T12:34:56.789Z"
+        - id: fedcba09-8765-4321
+          user_id: 1234-5678-90abcdef
+          content: ちくわを食べてこんちくわ
+          image_path: https://www.coindeskjapan.com/wp-content/uploads/2021/03/Screen-Shot-2021-02-19-at-4.14.43-PM-710x458.jpg
+          funny_count: 3
+          yummy_count: 421
+          created_at: "2002-02-17T12:34:56.789Z"
+          updated_at: "2002-02-17T12:34:56.789Z"
     MessageOK:
       value:
         message: OK
