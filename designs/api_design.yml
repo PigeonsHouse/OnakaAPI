@@ -1,0 +1,305 @@
+openapi: 3.0.0
+
+info:
+  title: OnakaAPI
+  version: dev
+
+servers:
+  - url: http://localhost:8000
+    description: develop
+
+paths:
+  /api/v1/users/signup:
+    post:
+      summary: register user info
+      tags:
+        - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpUser'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/UserResponseExample'
+  /api/v1/users/signin:
+    post:
+      summary: request jwt token
+      tags:
+        - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInUser'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/JwtInfo'
+              examples:
+                Example:
+                  $ref: '#/components/examples/JwtExample'
+  /api/v1/users/{user_id}:
+    get:
+      summary: get one's user info
+      tags:
+        - users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/UserResponseExample'
+  /api/v1/users/@me:
+    get:
+      summary: get my user info
+      tags:
+        - users
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/UserResponseExample'
+    patch:
+      summary: change user name
+      tags:
+        - users
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/UserResponseExample'
+    delete:
+      summary: delete user
+      tags:
+        - users
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Message'
+              examples:
+                Example:
+                  $ref: '#/components/examples/MessageOK'
+  /api/v1/posts/image:
+    post:
+      summary: post images
+      tags:
+        - posts
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: array
+                  items:
+                    description: "投稿画像"
+                    type: string
+                    format: binary
+                  minItems: 1
+                  maxItems: 4
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ImagePath'
+              examples:
+                Example:
+                  $ref: '#/components/examples/ImagePath'
+  /api/v1/posts:
+    post:
+      summary: create a post
+      tags:
+        - posts
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+              examples:
+                Example:
+                  $ref: '#/components/examples/PostResponseExample'
+      
+
+components:
+  schemas:
+    SignUpUser:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    SignInUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    CreatePost:
+      type: object
+      properties:
+        content:
+          type: string
+        image_path:
+          type: string
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    JwtInfo:
+      type: object
+      properties:
+        jwt:
+          type: string
+    ImagePath:
+      type: object
+      properties:
+        url:
+          type: string
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    PostResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        content:
+          type: string
+        image_path:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+  examples:
+    UserResponseExample:
+      value:
+        id: 1234-5678-90abcdef
+        name: hoge_user
+        email: hoge@example.com
+        created_at: "2002-02-17T12:34:56.789Z"
+        updated_at: "2002-02-17T12:34:56.789Z"
+    PostResponseExample:
+      value:
+        id: fedcba09-8765-4321
+        user_id: 1234-5678-90abcdef
+        content: ちくわを食べてこんちくわ
+        image_path: https://www.coindeskjapan.com/wp-content/uploads/2021/03/Screen-Shot-2021-02-19-at-4.14.43-PM-710x458.jpg
+        created_at: "2002-02-17T12:34:56.789Z"
+        updated_at: "2002-02-17T12:34:56.789Z"
+    MessageOK:
+      value:
+        message: OK
+    JwtExample:
+      value:
+        jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.t42p4AHef69Tyyi88U6+p0utZYYrg7mmCGhoAd7Zffs
+    ImagePath:
+      value:
+        url: https://www.coindeskjapan.com/wp-content/uploads/2021/03/Screen-Shot-2021-02-19-at-4.14.43-PM-710x458.jpg
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: Credentials or access token for API
