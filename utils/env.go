@@ -18,7 +18,7 @@ var (
 
 func LoadEnv() {
 	godotenv.Load(".env")
-	ApiPort = getEnv("API_PORT", "8000")
+	ApiPort = getEnv("PORT", "8000")
 
 	DbHost = getEnv("POSTGRES_HOST", "localhost")
 	DbUser = getEnv("POSTGRES_USER", "user")

@@ -85,3 +85,14 @@ func PostPosts(content string, url string, userId string) (db.Posts, error){
 	p.YummyUsers = user
 	return p, nil
 }
+
+func DeletePost(postId string, userId string) (err error) {
+	if err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).First(&db.Posts{}).Error; err != nil {
+		return
+	}
+	db.Psql.Where("posts_id = ?", postId).Delete(&db.Yummy{})
+	db.Psql.Where("posts_id = ?", postId).Delete(&db.Funny{})
+
+	err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).Delete(&db.Posts{}).Error
+	return
+}
