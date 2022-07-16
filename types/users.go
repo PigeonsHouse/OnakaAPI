@@ -3,9 +3,9 @@ package types
 import "time"
 
 type SignUpUser struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `form:"name" json:"name"`
+	Email    string `form:"email" json:"email"`
+	Password string `form:"password" json:"password"`
 }
 
 type UserResponse struct {

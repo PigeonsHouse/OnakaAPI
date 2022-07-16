@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"fmt"
 	"net/http"
 	"onaka-api/cruds"
 	"onaka-api/types"
@@ -15,9 +16,9 @@ func initUserRouter(ur *gin.RouterGroup) {
 func signUp(c *gin.Context) {
 	var payload types.SignUpUser
 	c.Bind(&payload)
+	fmt.Println(payload)
 
-	var u *types.UserResponse
-	cruds.CreateUser(u, payload.Name, payload.Email, payload.Password)
+	u := cruds.CreateUser(payload.Name, payload.Email, payload.Password)
 
 	c.JSON(http.StatusOK, &u)
 }
