@@ -1,3 +1,5 @@
 #!/bin/bash
-rsync -av ./ sasami:~/OnakaAPI/
-ssh sasami "cd ~/OnakaAPI; docker-compose build; docker-compose down; docker-compose up -d"
+ssh sasami "mkdir -p ~/OnakaAPI"
+rsync -av ./onaka-api sasami:~/OnakaAPI/
+rsync -av ./.env sasami:~/OnakaAPI/
+ssh sasami "nohup ~/OnakaAPI/onaka-api &"
