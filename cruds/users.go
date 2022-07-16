@@ -1,6 +1,7 @@
 package cruds
 
 import (
+	"errors"
 	"onaka-api/db"
 	"onaka-api/types"
 	"onaka-api/utils"
@@ -10,9 +11,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(email string, name string, password string) (types.UserResponse, error) {
+func CreateUser(name string, email string, password string) (types.UserResponse, error) {
 	if err := db.Psql.Where("email = ?", email).First(&db.User{}).Error; err == nil {
-		return types.UserResponse{}, err
+		return types.UserResponse{}, errors.New("email is already exist")
 	}
 
 	hash_pass, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
@@ -54,4 +55,11 @@ func generateToken(userID string) (string, error) {
 		"exp": now.Add(7 * 24 * time.Hour).Unix(),
 	})
 	return token.SignedString(utils.SigningKey)
+}
+
+func GetUserByID(user *db.User, userID string) (err error) {
+	usrTmp := db.User{}
+	err = db.Psql.First(&usrTmp, "id = ?", userID).Error
+	*user = usrTmp
+	return
 }
