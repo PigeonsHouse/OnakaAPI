@@ -15,6 +15,7 @@ func initUserRouter(ur *gin.RouterGroup) {
 	ur.POST("/signin", signIn)
 
 	ur.GET("/@me", middleware, getMe)
+	ur.GET("/:user_id", getUser)
 }
 
 func signUp(c *gin.Context) {
@@ -65,6 +66,28 @@ func getMe(c *gin.Context) {
 
 	userInfo := &db.User{}
 	if err := cruds.GetUserByID(userInfo, userId.(string)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "user is not exist",
+		})
+		return
+	}
+
+	fmt.Println(userInfo)
+
+	c.JSON(http.StatusOK, types.UserResponse{
+		ID:        userInfo.ID,
+		Name:      userInfo.Name,
+		Email:     userInfo.Email,
+		CreatedAt: userInfo.CreatedAt,
+		UpdatedAt: userInfo.UpdatedAt,
+	})
+	return
+}
+
+func getUser(c *gin.Context) {
+	userId := c.Param("user_id")
+	userInfo := &db.User{}
+	if err := cruds.GetUserByID(userInfo, userId); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "user is not exist",
 		})
