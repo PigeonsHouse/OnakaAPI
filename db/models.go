@@ -13,7 +13,7 @@ func (base *Base) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type Base struct {
-	ID        string    `sql:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	ID        string    `gorm:"primaryKey" json:"id" sql:"type:uuid;primary_key;default:uuid_generate_v4()"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -22,17 +22,17 @@ type User struct {
 	Base
 	Name         string `json:"name"`
 	Email        string `json:"email"`
-	PasswordHash string `json:"password_hash"`
+	PasswordHash string `json:"-"`
 }
 
 type Posts struct {
 	Base
-	UserID    string `json:"user_id"`
-	Content   string `json:"content"`
-	ImageUrl  string `json:"image_url"`
-	User      User   `gorm:"foreignKey:UserID;references:ID" json:"user"`
-	FunnyUser []User `gorm:"many2many:funnies;"`
-	YummyUser []User `gorm:"many2many:yummies;"`
+	UserID     string `json:"-"`
+	Content    string `json:"content"`
+	ImageUrl   string `json:"image_url"`
+	User       User   `gorm:"foreignKey:UserID;reference:ID" json:"user"`
+	FunnyUsers []User `gorm:"many2many:funnies;" json:"funny_users"`
+	YummyUsers []User `gorm:"many2many:yummies;" json:"yummy_users"`
 }
 
 type Funny struct {
