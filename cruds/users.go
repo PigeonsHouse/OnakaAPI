@@ -69,7 +69,7 @@ func DeleteUser(userId string) (err error) {
 		return
 	}
 
-	posts := []db.Posts{}
+	posts := []db.Post{}
 	if err = db.Psql.Where("user_id = ?", userId).Find(&posts).Error; err != nil {
 		return
 	}
