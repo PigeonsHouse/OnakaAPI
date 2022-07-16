@@ -15,6 +15,7 @@ func initUserRouter(ur *gin.RouterGroup) {
 	ur.POST("/signin", signIn)
 
 	ur.GET("/@me", middleware, getMe)
+	ur.DELETE("/@me", middleware, deleteMe)
 	ur.GET("/:user_id", getUser)
 }
 
@@ -98,4 +99,28 @@ func getUser(c *gin.Context) {
 		UpdatedAt: userInfo.UpdatedAt,
 	})
 	return
+}
+
+func deleteMe(c *gin.Context) {
+	var (
+		userId  any
+		isExist bool
+	)
+
+	if userId, isExist = c.Get("user_id"); !isExist {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "token is invalid",
+		})
+		return
+	}
+
+	if err := cruds.DeleteUser(userId.(string)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "OK",
+	})
 }

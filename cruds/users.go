@@ -63,3 +63,20 @@ func GetUserByID(user *db.User, userID string) (err error) {
 	*user = usrTmp
 	return
 }
+
+func DeleteUser(userId string) (err error) {
+	if err = db.Psql.First(&db.User{}).Error; err != nil {
+		return
+	}
+
+	posts := []db.Posts{}
+	if err = db.Psql.Where("user_id = ?", userId).Find(&posts).Error; err != nil {
+		return
+	}
+	for _, post := range posts {
+		err = DeletePost(post.ID, userId)
+	}
+
+	err = db.Psql.Where("id = ?", userId).Delete(&db.User{}).Error
+	return
+}
