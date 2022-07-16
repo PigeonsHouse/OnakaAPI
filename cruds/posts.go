@@ -54,3 +54,11 @@ func GetPost(postId string) (post db.Posts, err error) {
 	post.YummyUsers = user
 	return
 }
+
+func DeletePost(postId string, userId string) (err error) {
+	db.Psql.Where("posts_id = ?", postId).Delete(&db.Yummy{})
+	db.Psql.Where("posts_id = ?", postId).Delete(&db.Funny{})
+
+	err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).Delete(&db.Posts{}).Error
+	return
+}
