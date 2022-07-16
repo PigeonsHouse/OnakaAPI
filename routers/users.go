@@ -1,8 +1,10 @@
 package routers
 
 import (
+	"fmt"
 	"net/http"
 	"onaka-api/cruds"
+	"onaka-api/db"
 	"onaka-api/types"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +13,8 @@ import (
 func initUserRouter(ur *gin.RouterGroup) {
 	ur.POST("/signup", signUp)
 	ur.POST("/signin", signIn)
+
+	ur.GET("/@me", middleware, getMe)
 }
 
 func signUp(c *gin.Context) {
@@ -21,7 +25,7 @@ func signUp(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "email is already exist",
+			"message": err.Error(),
 		})
 		return
 	}
@@ -32,6 +36,7 @@ func signUp(c *gin.Context) {
 func signIn(c *gin.Context) {
 	var payload types.SignInUser
 	c.Bind(&payload)
+	fmt.Printf("%s %s\n", payload.Email, payload.Password)
 
 	u, err := cruds.GenerateJWT(payload.Email, payload.Password)
 
@@ -43,4 +48,37 @@ func signIn(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &u)
+}
+
+func getMe(c *gin.Context) {
+	var (
+		userId  any
+		isExist bool
+	)
+
+	if userId, isExist = c.Get("user_id"); !isExist {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "token is invalid",
+		})
+		return
+	}
+
+	userInfo := &db.User{}
+	if err := cruds.GetUserByID(userInfo, userId.(string)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "user is not exist",
+		})
+		return
+	}
+
+	fmt.Println(userInfo)
+
+	c.JSON(http.StatusOK, types.UserResponse{
+		ID:        userInfo.ID,
+		Name:      userInfo.Name,
+		Email:     userInfo.Email,
+		CreatedAt: userInfo.CreatedAt,
+		UpdatedAt: userInfo.UpdatedAt,
+	})
+	return
 }

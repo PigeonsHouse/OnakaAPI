@@ -1,9 +1,14 @@
 package routers
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
+
+	"onaka-api/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 func hello(c *gin.Context) {
@@ -24,4 +29,26 @@ func InitRouter(api *gin.Engine) {
 	initYummyRouter(yummy_router)
 	funny_router := v1.Group("/funny")
 	initFunnyRouter(funny_router)
+}
+
+func middleware(c *gin.Context) {
+	authorizationHeader := c.Request.Header.Get("Authorization")
+	if authorizationHeader != "" {
+		ary := strings.Split(authorizationHeader, " ")
+		if len(ary) == 2 {
+			if ary[0] == "Bearer" {
+				t, err := jwt.ParseWithClaims(ary[1], &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+					return utils.SigningKey, nil
+				})
+
+				if claims, ok := t.Claims.(*jwt.MapClaims); ok && t.Valid {
+					userId := (*claims)["sub"].(string)
+					c.Set("user_id", userId)
+				} else {
+					fmt.Println(err)
+				}
+			}
+		}
+	}
+	c.Next()
 }
