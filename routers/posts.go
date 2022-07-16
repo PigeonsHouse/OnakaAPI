@@ -3,6 +3,7 @@ package routers
 import (
 	"net/http"
 	"onaka-api/cruds"
+	"onaka-api/db"
 	"onaka-api/types"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +35,6 @@ func getPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, timeline)
 }
 
-
 func getPostById(c *gin.Context) {
 	if _, isExist := c.Get("user_id"); !isExist {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -64,10 +64,12 @@ func getPostById(c *gin.Context) {
 // 	//file, fileHeader, err := c.Request.FormFile("file")
 // }
 
-func postPosts(c *gin.Context){
+func postPosts(c *gin.Context) {
 	var (
 		userId  any
 		isExist bool
+		p       db.Post
+		err     error
 	)
 
 	if userId, isExist = c.Get("user_id"); !isExist {
@@ -76,10 +78,15 @@ func postPosts(c *gin.Context){
 		})
 		return
 	}
-	var payload types.PostsResponse
+	var payload types.CreatePost
 	c.Bind(&payload)
-	u, _ := cruds.PostPosts(payload.Content, payload.ImageUrl, userId.(string))
-	c.JSON(http.StatusOK, &u)
+	if p, err = cruds.PostPosts(payload.Content, payload.ImageUrl, userId.(string)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, &p)
 }
 
 func deletePost(c *gin.Context) {

@@ -89,15 +89,7 @@ func getUser(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(userInfo)
-
-	c.JSON(http.StatusOK, types.UserResponse{
-		ID:        userInfo.ID,
-		Name:      userInfo.Name,
-		Email:     userInfo.Email,
-		CreatedAt: userInfo.CreatedAt,
-		UpdatedAt: userInfo.UpdatedAt,
-	})
+	c.JSON(http.StatusOK, userInfo)
 	return
 }
 

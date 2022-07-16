@@ -11,16 +11,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(name string, email string, password string) (types.UserResponse, error) {
-	if err := db.Psql.Where("email = ?", email).First(&db.User{}).Error; err == nil {
-		return types.UserResponse{}, errors.New("email is already exist")
+func CreateUser(name string, email string, password string) (res_user db.User, err error) {
+	if err = db.Psql.Where("email = ?", email).First(&db.User{}).Error; err == nil {
+		err = errors.New("email is already exist")
+		return
 	}
-
 	hash_pass, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
-	u := db.User{Email: email, Name: name, PasswordHash: string(hash_pass)}
-	db.Psql.Create(&u)
-	res_user := types.UserResponse{ID: u.ID, Name: u.Name, Email: u.Email, CreatedAt: u.CreatedAt, UpdatedAt: u.UpdatedAt}
-	return res_user, nil
+	res_user = db.User{Email: email, Name: name, PasswordHash: string(hash_pass)}
+	err = db.Psql.Create(&res_user).Error
+	return
 }
 
 func GenerateJWT(email string, password string) (jwtInfo types.JWTInfo, err error) {
