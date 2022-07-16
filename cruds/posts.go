@@ -4,6 +4,7 @@ import (
 	"onaka-api/db"
 )
 
+
 func GetTimeLine() (timeline []db.Posts, err error) {
 	err = db.Psql.Model(&db.Posts{}).Find(&timeline).Error
 	if err != nil {
@@ -53,6 +54,36 @@ func GetPost(postId string) (post db.Posts, err error) {
 	}
 	post.YummyUsers = user
 	return
+
+
+
+
+}
+
+
+func PostPosts(content string, url string, userId string) (db.Posts, error){
+	p := db.Posts{Content: content, ImageUrl: url, UserID: userId}
+	db.Psql.Create(&p)
+	if err := db.Psql.First(&p, "id = ?", p.ID).Error; err != nil{
+		return p, err
+	}
+	var user []db.User
+	err := db.Psql.Model(&p).Association("User").Find(&user)
+	if err != nil {
+		return p, err
+	}
+	p.User = user[0]
+	err = db.Psql.Model(&p).Association("FunnyUsers").Find(&user)
+	if err != nil {
+		return p, err
+	}
+	p.FunnyUsers = user
+	err = db.Psql.Model(&p).Association("YummyUsers").Find(&user)
+	if err != nil {
+		return p, err
+	}
+	p.YummyUsers = user
+	return p, nil
 }
 
 func DeletePost(postId string, userId string) (err error) {
