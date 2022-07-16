@@ -1,5 +1,15 @@
 version: '3.9'
 services:
+  api:
+    container_name: onaka_api
+    build: .
+    ports:
+      - 8000:8000
+    tty: true
+    volumes:
+      - .:/go/src/OnakaAPI
+    depends_on:
+      - db
   db:
     container_name: dev_db
     image: postgres:13.3-alpine
