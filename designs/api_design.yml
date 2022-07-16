@@ -7,6 +7,8 @@ info:
 servers:
   - url: http://localhost:8000
     description: develop
+  - url: https://onaka-api.herokuapp.com
+    description: product
 
 paths:
   /api/v1/users/signup:
