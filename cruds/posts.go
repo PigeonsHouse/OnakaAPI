@@ -1,8 +1,18 @@
 package cruds
 
 import (
+	"mime/multipart"
+	"net/textproto"
 	"onaka-api/db"
 )
+
+type FileHeader struct {
+	Filename string
+	Header   textproto.MIMEHeader
+	Size     int64
+	content  []byte
+	tmpfile  string
+}
 
 func GetTimeLine() (timeline []db.Posts, err error) {
 	err = db.Psql.Model(&db.Posts{}).Find(&timeline).Error
@@ -53,4 +63,13 @@ func GetPost(postId string) (post db.Posts, err error) {
 	}
 	post.YummyUsers = user
 	return
+
+
+
+
+}
+
+func PostImages(file *multipart.FileHeader) (string, error){
+	temp := db.Psql.Create(&file)
+	
 }

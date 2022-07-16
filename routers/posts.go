@@ -25,14 +25,22 @@ func getPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, timeline)
 }
 
+
 func getPostById(c *gin.Context) {
 	postId := c.Param("post_id")
 	post, err := cruds.GetPost(postId)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})
+
 		return
 	}
 	c.JSON(http.StatusOK, post)
+}
+
+func postPostsImage(c *gin.Context){
+	file, err := c.FormFile("file")
+	//file, fileHeader, err := c.Request.FormFile("file")
 }
