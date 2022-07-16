@@ -36,11 +36,11 @@ type Posts struct {
 }
 
 type Funny struct {
-	UserID string `gorm:"primaryKey" json:"user_id"`
-	PostID string `gorm:"primaryKey" json:"post_id"`
+	UserID  string `gorm:"primaryKey" json:"user_id"`
+	PostsID string `gorm:"primaryKey" json:"posts_id"`
 }
 
 type Yummy struct {
-	UserID string `gorm:"primaryKey" json:"user_id"`
-	PostID string `gorm:"primaryKey" json:"post_id"`
+	UserID  string `gorm:"primaryKey" json:"user_id"`
+	PostsID string `gorm:"primaryKey" json:"posts_id"`
 }
