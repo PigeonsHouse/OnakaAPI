@@ -4,9 +4,8 @@ import (
 	"onaka-api/db"
 )
 
-
-func GetTimeLine() (timeline []db.Posts, err error) {
-	err = db.Psql.Model(&db.Posts{}).Find(&timeline).Error
+func GetTimeLine() (timeline []db.Post, err error) {
+	err = db.Psql.Model(&db.Post{}).Find(&timeline).Error
 	if err != nil {
 		return
 	}
@@ -32,7 +31,7 @@ func GetTimeLine() (timeline []db.Posts, err error) {
 	return
 }
 
-func GetPost(postId string) (post db.Posts, err error) {
+func GetPost(postId string) (post db.Post, err error) {
 	err = db.Psql.First(&post, "id = ?", postId).Error
 	if err != nil {
 		return
@@ -54,17 +53,12 @@ func GetPost(postId string) (post db.Posts, err error) {
 	}
 	post.YummyUsers = user
 	return
-
-
-
-
 }
 
-
-func PostPosts(content string, url string, userId string) (db.Posts, error){
-	p := db.Posts{Content: content, ImageUrl: url, UserID: userId}
+func PostPosts(content string, url string, userId string) (db.Post, error) {
+	p := db.Post{Content: content, ImageUrl: url, UserID: userId}
 	db.Psql.Create(&p)
-	if err := db.Psql.First(&p, "id = ?", p.ID).Error; err != nil{
+	if err := db.Psql.First(&p, "id = ?", p.ID).Error; err != nil {
 		return p, err
 	}
 	var user []db.User
@@ -87,12 +81,12 @@ func PostPosts(content string, url string, userId string) (db.Posts, error){
 }
 
 func DeletePost(postId string, userId string) (err error) {
-	if err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).First(&db.Posts{}).Error; err != nil {
+	if err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).First(&db.Post{}).Error; err != nil {
 		return
 	}
 	db.Psql.Where("posts_id = ?", postId).Delete(&db.Yummy{})
 	db.Psql.Where("posts_id = ?", postId).Delete(&db.Funny{})
 
-	err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).Delete(&db.Posts{}).Error
+	err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).Delete(&db.Post{}).Error
 	return
 }

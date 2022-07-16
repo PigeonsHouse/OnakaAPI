@@ -25,7 +25,7 @@ type User struct {
 	PasswordHash string `json:"-"`
 }
 
-type Posts struct {
+type Post struct {
 	Base
 	UserID     string `json:"-"`
 	Content    string `json:"content"`
@@ -36,11 +36,11 @@ type Posts struct {
 }
 
 type Funny struct {
-	UserID  string `gorm:"primaryKey" json:"user_id"`
-	PostsID string `gorm:"primaryKey" json:"posts_id"`
+	UserID string `gorm:"primaryKey" json:"user_id"`
+	PostID string `gorm:"primaryKey" json:"post_id"`
 }
 
 type Yummy struct {
-	UserID  string `gorm:"primaryKey" json:"user_id"`
-	PostsID string `gorm:"primaryKey" json:"posts_id"`
+	UserID string `gorm:"primaryKey" json:"user_id"`
+	PostID string `gorm:"primaryKey" json:"post_id"`
 }
