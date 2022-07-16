@@ -22,7 +22,7 @@ func LoadEnv() {
 
 	DbHost = getEnv("POSTGRES_HOST", "localhost")
 	DbUser = getEnv("POSTGRES_USER", "user")
-	DbPass = getEnv("POSTGRES_PASS", "password")
+	DbPass = getEnv("POSTGRES_PASSWORD", "password")
 	DbName = getEnv("POSTGRES_DB", "postgres")
 	DbPort = getEnv("POSTGRES_PORT", "5432")
 	secretKey := getEnv("SECRET_KEY", "secret")
