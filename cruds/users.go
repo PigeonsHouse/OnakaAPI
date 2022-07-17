@@ -79,3 +79,12 @@ func DeleteUser(userId string) (err error) {
 	err = db.Psql.Where("id = ?", userId).Delete(&db.User{}).Error
 	return
 }
+
+func UpdateName(userId string, name string) (u db.User, err error) {
+	if err = GetUserByID(&u, userId); err != nil {
+		return
+	}
+	u.Name = name
+	err = db.Psql.Save(&u).Error
+	return
+}
