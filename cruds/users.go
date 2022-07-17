@@ -2,6 +2,7 @@ package cruds
 
 import (
 	"errors"
+	"fmt"
 	"onaka-api/db"
 	"onaka-api/types"
 	"onaka-api/utils"
@@ -64,7 +65,7 @@ func GetUserByID(user *db.User, userID string) (err error) {
 }
 
 func DeleteUser(userId string) (err error) {
-	if err = db.Psql.First(&db.User{}).Error; err != nil {
+	if err = db.Psql.First(&db.User{}, "id = ?", userId).Error; err != nil {
 		return
 	}
 
@@ -74,6 +75,7 @@ func DeleteUser(userId string) (err error) {
 	}
 	for _, post := range posts {
 		err = DeletePost(post.ID, userId)
+		fmt.Println(err.Error())
 	}
 
 	err = db.Psql.Where("id = ?", userId).Delete(&db.User{}).Error

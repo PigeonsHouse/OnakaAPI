@@ -6,7 +6,7 @@ import (
 )
 
 func GiveFunny(postId string, userId string) (post db.Post, err error) {
-	if err = db.Psql.Where("posts_id = ? AND user_id = ?", postId, userId).First(&db.Funny{}).Error; err == nil {
+	if err = db.Psql.Where("post_id = ? AND user_id = ?", postId, userId).First(&db.Funny{}).Error; err == nil {
 		err = errors.New("funny is already exist")
 		return
 	}
@@ -23,7 +23,7 @@ func GiveFunny(postId string, userId string) (post db.Post, err error) {
 }
 
 func DeleteFunny(postId string, userId string) (post db.Post, err error) {
-	if err = db.Psql.Where("posts_id = ? AND user_id = ?", postId, userId).First(&db.Funny{}).Error; err != nil {
+	if err = db.Psql.Where("post_id = ? AND user_id = ?", postId, userId).First(&db.Funny{}).Error; err != nil {
 		err = errors.New("funny is not found")
 		return
 	}

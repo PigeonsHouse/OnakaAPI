@@ -162,9 +162,11 @@ paths:
                   $ref: '#/components/examples/UserResponseExample'
   /api/v1/users/{user_id}/posts:
     get:
-      summary: get one's posts
+      summary: get someone's posts
       tags:
         - posts
+      security:
+        - Bearer: []
       parameters:
         - name: user_id
           in: path
@@ -185,41 +187,6 @@ paths:
               examples:
                 Example:
                     $ref: '#/components/examples/TimeLineExample'
-  /api/v1/posts/image:
-    post:
-      summary: post images
-      tags:
-        - posts
-      security:
-        - Bearer: []
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required:
-                - image
-              properties:
-                image:
-                  type: array
-                  items:
-                    description: "投稿画像"
-                    type: string
-                    format: binary
-                  minItems: 1
-                  maxItems: 4
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/ImagePath'
-              examples:
-                Example:
-                  $ref: '#/components/examples/ImagePath'
   /api/v1/posts:
     post:
       summary: create a post
@@ -439,7 +406,7 @@ components:
       properties:
         content:
           type: string
-        image_path:
+        image_url:
           type: string
     Message:
       type: object

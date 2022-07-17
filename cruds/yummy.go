@@ -6,7 +6,7 @@ import (
 )
 
 func GiveYummy(postId string, userId string) (post db.Post, err error) {
-	if err = db.Psql.Where("posts_id = ? AND user_id = ?", postId, userId).First(&db.Yummy{}).Error; err == nil {
+	if err = db.Psql.Where("post_id = ? AND user_id = ?", postId, userId).First(&db.Yummy{}).Error; err == nil {
 		err = errors.New("yummy is already exist")
 		return
 	}
@@ -23,7 +23,7 @@ func GiveYummy(postId string, userId string) (post db.Post, err error) {
 }
 
 func DeleteYummy(postId string, userId string) (post db.Post, err error) {
-	if err = db.Psql.Where("posts_id = ? AND user_id = ?", postId, userId).First(&db.Yummy{}).Error; err != nil {
+	if err = db.Psql.Where("post_id = ? AND user_id = ?", postId, userId).First(&db.Yummy{}).Error; err != nil {
 		err = errors.New("yummy is not found")
 		return
 	}

@@ -1,6 +1,7 @@
 package cruds
 
 import (
+	"fmt"
 	"onaka-api/db"
 )
 
@@ -12,19 +13,13 @@ func GetTimeLine() (timeline []db.Post, err error) {
 	for i, post := range timeline {
 		var user []db.User
 		err = db.Psql.Model(&post).Association("User").Find(&user)
-		if err != nil {
-			return
-		}
+		fmt.Println(user)
 		timeline[i].User = user[0]
 		err = db.Psql.Model(&post).Association("FunnyUsers").Find(&user)
-		if err != nil {
-			return
-		}
+		fmt.Println(user)
 		timeline[i].FunnyUsers = user
 		err = db.Psql.Model(&post).Association("YummyUsers").Find(&user)
-		if err != nil {
-			return
-		}
+		fmt.Println(user)
 		timeline[i].YummyUsers = user
 	}
 
@@ -84,9 +79,35 @@ func DeletePost(postId string, userId string) (err error) {
 	if err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).First(&db.Post{}).Error; err != nil {
 		return
 	}
-	db.Psql.Where("posts_id = ?", postId).Delete(&db.Yummy{})
-	db.Psql.Where("posts_id = ?", postId).Delete(&db.Funny{})
+	db.Psql.Where("post_id = ?", postId).Delete(&db.Yummy{})
+	db.Psql.Where("post_id = ?", postId).Delete(&db.Funny{})
 
 	err = db.Psql.Where("id = ? AND user_id = ?", postId, userId).Delete(&db.Post{}).Error
+	return
+}
+
+func GetPostsByUserId(userId string) (ps []db.Post, err error) {
+	if err = db.Psql.First(&db.User{}, "id = ?", userId).Error; err != nil {
+		return
+	}
+	db.Psql.Where("user_id = ?", userId).Find(&ps)
+	for i, post := range ps {
+		var user []db.User
+		err = db.Psql.Model(&post).Association("User").Find(&user)
+		if err != nil {
+			return
+		}
+		ps[i].User = user[0]
+		err = db.Psql.Model(&post).Association("FunnyUsers").Find(&user)
+		if err != nil {
+			return
+		}
+		ps[i].FunnyUsers = user
+		err = db.Psql.Model(&post).Association("YummyUsers").Find(&user)
+		if err != nil {
+			return
+		}
+		ps[i].YummyUsers = user
+	}
 	return
 }
