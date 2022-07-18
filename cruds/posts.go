@@ -5,8 +5,8 @@ import (
 	"onaka-api/db"
 )
 
-func GetTimeLine() (timeline []db.Post, err error) {
-	err = db.Psql.Model(&db.Post{}).Order("created_at desc").Find(&timeline).Error
+func GetTimeLine(limit int, page int) (timeline []db.Post, err error) {
+	err = db.Psql.Model(&db.Post{}).Order("created_at desc").Limit(limit).Offset((page - 1) * limit).Find(&timeline).Error
 	if err != nil {
 		return
 	}
@@ -86,11 +86,11 @@ func DeletePost(postId string, userId string) (err error) {
 	return
 }
 
-func GetPostsByUserId(userId string) (ps []db.Post, err error) {
+func GetPostsByUserId(userId string, limit int, page int) (ps []db.Post, err error) {
 	if err = db.Psql.First(&db.User{}, "id = ?", userId).Error; err != nil {
 		return
 	}
-	db.Psql.Where("user_id = ?", userId).Order("created_at desc").Find(&ps)
+	db.Psql.Where("user_id = ?", userId).Order("created_at desc").Limit(limit).Offset((page - 1) * limit).Find(&ps)
 	for i, post := range ps {
 		var user []db.User
 		err = db.Psql.Model(&post).Association("User").Find(&user)

@@ -123,6 +123,17 @@ paths:
         - posts
       security:
         - Bearer: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: OK
@@ -173,6 +184,16 @@ paths:
           required: true
           schema:
             type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: OK
@@ -217,6 +238,17 @@ paths:
         - posts
       security:
         - Bearer: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: OK

@@ -6,6 +6,7 @@ import (
 	"onaka-api/cruds"
 	"onaka-api/db"
 	"onaka-api/types"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -159,8 +160,18 @@ func getSomeonesPosts(c *gin.Context) {
 		return
 	}
 
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
+
+	if limit <= 0 {
+		limit = 50
+	}
+	if page <= 0 {
+		page = 1
+	}
+
 	userId = c.Param("user_id")
-	if posts, err = cruds.GetPostsByUserId(userId.(string)); err != nil {
+	if posts, err = cruds.GetPostsByUserId(userId.(string), limit, page); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})
@@ -185,7 +196,17 @@ func getMyPosts(c *gin.Context) {
 		return
 	}
 
-	if posts, err = cruds.GetPostsByUserId(userId.(string)); err != nil {
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
+
+	if limit <= 0 {
+		limit = 50
+	}
+	if page <= 0 {
+		page = 1
+	}
+
+	if posts, err = cruds.GetPostsByUserId(userId.(string), limit, page); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})

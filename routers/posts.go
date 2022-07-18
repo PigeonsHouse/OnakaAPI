@@ -5,6 +5,7 @@ import (
 	"onaka-api/cruds"
 	"onaka-api/db"
 	"onaka-api/types"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,13 +19,23 @@ func initPostRouter(pr *gin.RouterGroup) {
 }
 
 func getPosts(c *gin.Context) {
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
+
+	if limit <= 0 {
+		limit = 50
+	}
+	if page <= 0 {
+		page = 1
+	}
+
 	if _, isExist := c.Get("user_id"); !isExist {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "token is invalid",
 		})
 		return
 	}
-	timeline, err := cruds.GetTimeLine()
+	timeline, err := cruds.GetTimeLine(limit, page)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
