@@ -53,9 +53,6 @@ func GetPost(postId string) (post db.Post, err error) {
 func PostPosts(content string, url string, userId string) (db.Post, error) {
 	p := db.Post{Content: content, ImageUrl: url, UserID: userId}
 	db.Psql.Create(&p)
-	if err := db.Psql.First(&p, "id = ?", p.ID).Error; err != nil {
-		return p, err
-	}
 	var user []db.User
 	err := db.Psql.Model(&p).Association("User").Find(&user)
 	if err != nil {
