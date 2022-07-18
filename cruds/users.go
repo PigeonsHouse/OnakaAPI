@@ -75,7 +75,9 @@ func DeleteUser(userId string) (err error) {
 	}
 	for _, post := range posts {
 		err = DeletePost(post.ID, userId)
-		fmt.Println(err.Error())
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 	}
 
 	err = db.Psql.Where("id = ?", userId).Delete(&db.User{}).Error
